@@ -231,7 +231,7 @@ sub new {
           if $Tree::MultiNode::debug;
         $self->{'children'} = [];
         $self->{'parent'}   = undef;
-        $self->{'key'}      = $key || undef;
+        $self->{'key'}      = defined $key ? $key : undef;
         $self->{'value'}    = defined $value ? $value : undef;
     }
 
@@ -1128,9 +1128,9 @@ sub get_child_value {
     return defined $node ? $node->value() : undef;
 }
 
-=head2 Tree::MultiNode::Handle::remove_child
+=head2 Tree::MultiNode::Handle::kv_pairs
 
-Returns Tree::MultiNode::Node::child_kv_paris() for the
+Returns Tree::MultiNode::Node::child_kv_pairs() for the
 current node for this handle.
 
   my %pairs = $handle->kv_pairs();
@@ -1145,6 +1145,12 @@ sub kv_pairs {
 }
 
 =head2 Tree::MultiNode::Handle::remove_child
+
+Removes the child at the specified position, or at the current child
+position if no position is given.  Returns the key and value of the
+removed child node.
+
+  my ($key, $value) = $handle->remove_child(0);
 
 =cut
 
@@ -1285,8 +1291,9 @@ Todd Rinaldo <toddr@cpan.org>
 
 =head1 BUGS
 
-- There is currently no way to remove a child node.
+Please report bugs via the issue tracker at
+L<https://github.com/cpan-authors/Tree-MultiNode/issues>.
 
-=cut 
+=cut
 
 1;

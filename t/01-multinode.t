@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 80;
+use Test::More tests => 85;
 
 use Tree::MultiNode;
 
@@ -109,5 +109,16 @@ is($handle->down, 1, "down()");
 is($handle->get_value, 'fuzz', "down sent us to key with value fuzz");
 is($handle->set_key(0), 0, "set_key(0)");
 is($handle->get_key, 0, "0 Stores as a key");
+
+pass("**** test Node constructor with falsy keys");
+{
+    my $node_zero = Tree::MultiNode::Node->new(0, "zero_val");
+    is($node_zero->key(), 0, "Node->new(0, ...) preserves key 0");
+    is($node_zero->value(), "zero_val", "Node->new(0, ...) preserves value");
+
+    my $node_empty = Tree::MultiNode::Node->new("", "empty_val");
+    is($node_empty->key(), "", "Node->new('', ...) preserves empty string key");
+    is($node_empty->value(), "empty_val", "Node->new('', ...) preserves value");
+}
 
 #done_testing();
