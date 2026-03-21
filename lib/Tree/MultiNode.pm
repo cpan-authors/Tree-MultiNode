@@ -669,7 +669,8 @@ attempts to return the current child.  get_child returns a Node object.
 sub get_child {
     my $self     = shift;
     my $children = $self->{'curr_node'}->children;
-    my $pos      = shift || $self->{'curr_pos'};
+    my $pos      = shift;
+    $pos = defined $pos ? $pos : $self->{'curr_pos'};
 
     print __PACKAGE__, "::get_child() children: $children   $pos\n"
       if $Tree::MultiNode::debug;
@@ -1118,7 +1119,8 @@ node.
 
 sub get_child_value {
     my $self = shift;
-    my $pos  = shift || $self->{'curr_pos'};
+    my $pos  = shift;
+    $pos = defined $pos ? $pos : $self->{'curr_pos'};
 
     print __PACKAGE__, "::sub get_child_value() pos is: $pos\n"
       if $Tree::MultiNode::debug;
@@ -1148,7 +1150,8 @@ sub kv_pairs {
 
 sub remove_child {
     my $self = shift;
-    my $pos  = shift || $self->{'curr_pos'};
+    my $pos  = shift;
+    $pos = defined $pos ? $pos : $self->{'curr_pos'};
 
     print __PACKAGE__, "::remove_child() pos is: $pos\n"
       if $Tree::MultiNode::debug;
@@ -1165,6 +1168,7 @@ sub remove_child {
     }
 
     my $node = splice( @{$children}, $pos, 1 );
+    $self->{'curr_node'}->{'children'} = $children;
 
     return ( $node->key, $node->value );
 }

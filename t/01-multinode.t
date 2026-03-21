@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 71;
+use Test::More tests => 80;
 
 use Tree::MultiNode;
 
@@ -21,6 +21,38 @@ pass("**** [$0] Pairs: " .  join(', ',%pairs));
 ok(!defined $pairs{'b'}, "pair b not defined");
 ok( defined $pairs{'a'}, "pair a defined");
 ok( defined $pairs{'c'}, "pair c defined");
+
+pass("**** test remove_child at position 0");
+{
+    my $t2 = Tree::MultiNode->new;
+    my $h2 = Tree::MultiNode::Handle->new($t2);
+    $h2->add_child("x", 10);
+    $h2->add_child("y", 20);
+    $h2->add_child("z", 30);
+
+    my @rv = $h2->remove_child(0);
+    is($rv[0], "x", "remove_child(0) returns correct key");
+    is($rv[1], 10,  "remove_child(0) returns correct value");
+
+    my %p2 = $h2->kv_pairs();
+    ok(!defined $p2{'x'}, "child x removed");
+    ok( defined $p2{'y'}, "child y still present");
+    ok( defined $p2{'z'}, "child z still present");
+
+    my @keys = $h2->child_keys();
+    is(scalar @keys, 2, "child count is 2 after remove_child(0)");
+}
+
+pass("**** test remove_child updates children persistently");
+{
+    my $t3 = Tree::MultiNode->new;
+    my $h3 = Tree::MultiNode::Handle->new($t3);
+    $h3->add_child("p", 1);
+    $h3->add_child("q", 2);
+    $h3->remove_child(0);
+    my @keys = $h3->child_keys();
+    is(scalar @keys, 1, "children persist after remove_child");
+}
 
 pass("**** testing traverse...");
 pass("**** ....t digit formatting...");
