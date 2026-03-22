@@ -282,18 +282,19 @@ sub key {
   @returns  the value [scalar]
 
 Used to set, or retrieve the value for a node.  If a parameter is passed,
-it sets the value for the node.  The value of the value member is always
-returned.
+it sets the value for the node (including undef and other falsy values like
+0 or "").  The value of the value member is always returned.
 
   print $node3->value(), "\n";   # 'Larry'
+  $node3->value(0);              # sets value to 0
+  $node3->value(undef);          # sets value to undef
 
 =cut
 
 sub value {
-    my $self  = shift;
-    my $value = shift;
+    my ( $self, $value ) = @_;
 
-    if ( defined $value ) {
+    if ( @_ > 1 ) {
         print __PACKAGE__, "::value() setting value: $value on $self\n"
           if $Tree::MultiNode::debug;
         $self->{'value'} = $value;
@@ -1176,6 +1177,10 @@ sub remove_child {
     my $node = splice( @{$children}, $pos, 1 );
     $self->{'curr_node'}->{'children'} = $children;
 
+    # Reset handle's child cursor to avoid stale references
+    $self->{'curr_pos'}   = undef;
+    $self->{'curr_child'} = undef;
+
     return ( $node->key, $node->value );
 }
 
@@ -1232,10 +1237,15 @@ sub _traverseImpl {
     return;
 }
 
-=head2 Tree::MultiNode::Handle::traverse
- or to have
-the subref to be a method on an object (and still pass the object's 
-'self' to the method).
+=head2 Tree::MultiNode::Handle::otraverse
+
+Like traverse(), but designed for passing an object method.  The first
+argument after the handle should be the object, the second should be
+the method name or code reference, followed by any additional arguments.
+The handle is passed as the last argument to the method.
+
+This allows you to have the subref be a method on an object (and still
+pass the object's 'self' to the method).
 
   $handle->traverse( \&Some::Object::method, $obj, $const1, \%const2 );
 
