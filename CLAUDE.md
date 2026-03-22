@@ -21,7 +21,7 @@ prove -bv t/01-multinode.t      # Run a single test file verbosely
 ## Architecture
 
 - Single-file module: `lib/Tree/MultiNode.pm`
-- Tests: `t/00-load.t` (smoke), `t/01-multinode.t` (functional)
+- Tests: `t/00-load.t` (smoke), `t/01-multinode.t` (functional), `t/02-comprehensive.t` (full coverage), `t/03-bugfixes.t` (regression tests)
 - Extended tests: `xt/` (pod, pod-coverage)
 - CI: GitHub Actions across Linux (Perl 5.8–latest), macOS, Windows
 
@@ -34,8 +34,6 @@ prove -bv t/01-multinode.t      # Run a single test file verbosely
 
 ## Known Issues
 
-- Several methods use `shift || $self->{'curr_pos'}` which treats position 0 as falsy — open PRs #2 and #3 address this pattern
-- `Node::new()` has `$key || undef` which drops falsy keys like `0` or `""` — PR #3 addresses this
-- POD for `remove_child` heading actually documents `kv_pairs` — PR #3 fixes this
-- `remove_child` does not reset `curr_pos`/`curr_child` on the handle after removal
-- `Node::value()` setter uses `defined $value` so you cannot set a value to `undef` (use `clear_value()` instead)
+- Several methods used `shift || $self->{'curr_pos'}` which treats position 0 as falsy — fixed in PRs #2 and #3
+- `Node::new()` had `$key || undef` which dropped falsy keys like `0` or `""` — fixed in PR #3
+- POD for `remove_child` heading actually documented `kv_pairs` — fixed in PR #3

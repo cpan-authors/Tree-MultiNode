@@ -6,5 +6,7 @@ MANIFEST
 README
 t/00-load.t
 t/01-multinode.t
+t/02-comprehensive.t
+t/03-bugfixes.t
 xt/98-pod-coverage.t
 xt/99-pod.t
