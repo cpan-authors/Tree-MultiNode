@@ -924,11 +924,16 @@ sub first {
 
 sub next {
     my $self     = shift;
-    my $pos      = $self->{'curr_pos'} + 1;
     my $children = $self->{'curr_node'}->children;
     print __PACKAGE__, "::next() children: $children\n"
       if $Tree::MultiNode::debug;
 
+    # If no current child, behave like first() per documented contract
+    unless ( defined $self->{'curr_pos'} ) {
+        return $self->first();
+    }
+
+    my $pos = $self->{'curr_pos'} + 1;
     unless ( $pos >= 0 && $pos <= $#{$children} ) {
         return undef;
     }
@@ -940,11 +945,16 @@ sub next {
 
 sub prev {
     my $self     = shift;
-    my $pos      = $self->{'curr_pos'} - 1;
     my $children = $self->{'curr_node'}->children;
     print __PACKAGE__, "::prev() children: $children\n"
       if $Tree::MultiNode::debug;
 
+    # If no current child, behave like last() per documented contract
+    unless ( defined $self->{'curr_pos'} ) {
+        return $self->last();
+    }
+
+    my $pos = $self->{'curr_pos'} - 1;
     unless ( $pos >= 0 && $pos <= $#{$children} ) {
         return undef;
     }
@@ -1247,7 +1257,7 @@ The handle is passed as the last argument to the method.
 This allows you to have the subref be a method on an object (and still
 pass the object's 'self' to the method).
 
-  $handle->traverse( \&Some::Object::method, $obj, $const1, \%const2 );
+  $handle->otraverse( $obj, \&Some::Object::method, $const1, \%const2 );
 
   ...
   sub method
@@ -1261,11 +1271,11 @@ pass the object's 'self' to the method).
 =cut
 
 sub otraverse {
-    my ( $self, $subref, @args ) = @_;
-    confess "Error, invalid sub ref: $subref\n" unless 'CODE' eq ref($subref);
+    my ( $self, $obj, $method, @args ) = @_;
+    confess "Error, invalid sub ref: $method\n" unless 'CODE' eq ref($method);
 
     # operate on a cloned handle
-    return Tree::MultiNode::Handle->new($self)->_otraverseImpl( $subref, @args );
+    return Tree::MultiNode::Handle->new($self)->_otraverseImpl( $obj, $method, @args );
 }
 
 sub _otraverseImpl {
