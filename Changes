@@ -1,5 +1,32 @@
 Revision history for Perl extension Tree::MultiNode.
 
+2.01 2026-03-22
+
+  Bug Fixes:
+  - Fix remove_child(0) failing because position 0 is treated as falsy.
+    The same || bug affected get_child() and get_child_value().
+    Fixes GH #1 (rt.cpan.org #83606), PR #2
+  - Fix Node constructor losing falsy keys like 0 and "". The $key || undef
+    pattern dropped valid falsy values. PR #3
+  - Fix remove_child() leaving curr_pos and curr_child pointing at stale
+    data after removing a child node. PR #6
+  - Fix value() setter not accepting falsy values (0, "", undef) due to
+    using defined() instead of argument count check. PR #6
+  - Fix otraverse() POD heading incorrectly duplicating the traverse
+    heading. PR #6
+
+  Improvements:
+  - Add comprehensive test suite (t/02-comprehensive.t) covering 37
+    subtests across Node, Tree, and Handle packages. PR #4
+  - Fix stale POD: remove_child heading actually documented kv_pairs. PR #3
+
+  Maintenance:
+  - Modernize GitHub Actions CI workflow (Linux Perl 5.8–latest, macOS,
+    Windows). PR #5
+  - Update MANIFEST for new xt files
+  - Code tidying
+  - Add GitHub README
+
 1.0.14 Fri Jan 22 2020
  - Switch to github CI
  - Switch to github issue tracker. RT going away.

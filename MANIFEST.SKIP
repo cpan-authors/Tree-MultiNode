@@ -1,12 +1,10 @@
-^.github/
-^.git/.*
-^MYMETA.*
-^MANIFEST\.
-^.gitignore
-^.perltidyrc
+^\.git
+^MYMETA\.*
+^MANIFEST\.bak$
+^\.perltidyrc$
 ^Makefile$
 ^blib
 ^pm_to_blib
 ^.*\.bs
-cpanfile
+^cpanfile$
 ^CLAUDE\.md$
