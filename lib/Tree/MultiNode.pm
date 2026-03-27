@@ -136,7 +136,6 @@ use warnings;
 use 5.008;
 
 our $VERSION = '2.01';
-our @ISA     = ();
 our $debug;
 
 =head2 Tree::MultiNode::new
