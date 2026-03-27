@@ -132,8 +132,9 @@ The tree object.
 
 package Tree::MultiNode;
 use strict;
+use warnings;
 use vars qw( $VERSION @ISA );
-require 5.004;
+require 5.006;
 
 $VERSION = '2.01';
 @ISA     = ();
@@ -173,6 +174,7 @@ sub DESTROY {
 ################################################################################
 package Tree::MultiNode::Node;
 use strict;
+use warnings;
 use Carp;
 
 =head2 Tree::MultiNode::Node
@@ -468,6 +470,7 @@ sub _clearrefs {
 ################################################################################
 package Tree::MultiNode::Handle;
 use strict;
+use warnings;
 use Carp;
 
 =head2 Tree::MultiNode::Handle
@@ -1303,6 +1306,11 @@ Todd Rinaldo <toddr@cpan.org>
 
 Please report bugs via the issue tracker at
 L<https://github.com/cpan-authors/Tree-MultiNode/issues>.
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.  See L<perlartistic> and L<perlgpl>.
 
 =cut
 
