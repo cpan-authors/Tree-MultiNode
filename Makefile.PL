@@ -22,10 +22,17 @@ WriteMakefile(
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Tree-MultiNode-*' },
     META_MERGE  => {
+        'meta-spec' => { version => 2 },
         resources => {
-            license => 'http://dev.perl.org/licenses/',
-            bugtracker => 'https://github.com/toddr/Tree-MultiNode/issues',
-            repository => 'https://github.com/toddr/Tree-MultiNode',
+            license => ['http://dev.perl.org/licenses/'],
+            bugtracker => {
+                web => 'https://github.com/cpan-authors/Tree-MultiNode/issues',
+            },
+            repository => {
+                type => 'git',
+                url  => 'https://github.com/cpan-authors/Tree-MultiNode.git',
+                web  => 'https://github.com/cpan-authors/Tree-MultiNode',
+            },
         },
         provides => {
             'Tree::MultiNode' => {
