@@ -8,7 +8,7 @@ WriteMakefile(
     VERSION_FROM        => 'lib/Tree/MultiNode.pm',
     ABSTRACT_FROM       => 'lib/Tree/MultiNode.pm',
     PL_FILES            => {},
-    MIN_PERL_VERSION    => '5.004',
+    MIN_PERL_VERSION    => '5.008',
     ($ExtUtils::MakeMaker::VERSION >= 6.3002 ? ('LICENSE'        => 'perl', ) : ()),
     ($ExtUtils::MakeMaker::VERSION >= 6.64 ? (
         TEST_REQUIRES => {
