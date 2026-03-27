@@ -135,7 +135,7 @@ use strict;
 use warnings;
 use 5.008;
 
-our $VERSION = '1.0.14';
+our $VERSION = '2.01';
 our @ISA     = ();
 our $debug;
 
@@ -1291,6 +1291,11 @@ Todd Rinaldo <toddr@cpan.org>
 
 Please report bugs via the issue tracker at
 L<https://github.com/cpan-authors/Tree-MultiNode/issues>.
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.  See L<perlartistic> and L<perlgpl>.
 
 =cut
 
