@@ -9,8 +9,8 @@ modeling hierarchical data structures.
   use Tree::MultiNode;
   use strict; 
   use warnings;
-  my $tree   = new Tree::MultiNode;
-  my $handle = new Tree::MultiNode::Handle($tree);
+  my $tree   = Tree::MultiNode->new;
+  my $handle = Tree::MultiNode::Handle->new($tree);
 
   $handle->set_key("top");
   $handle->set_value("level");
@@ -76,8 +76,8 @@ When you first construct a tree, it will have a single empty node.  When you
 construct a handle into that tree, it will set the top node in the tree as 
 it's current node.  
 
-  my $tree   = new Tree::MultiNode;
-  my $handle = new Tree::MultiNode::Handle($tree);
+  my $tree   = Tree::MultiNode->new;
+  my $handle = Tree::MultiNode::Handle->new($tree);
 
 =head2 Using a Handle to Manipulate the Tree
 
@@ -133,11 +133,10 @@ The tree object.
 package Tree::MultiNode;
 use strict;
 use warnings;
-use vars qw( $VERSION @ISA );
-require 5.006;
+use 5.008;
 
-$VERSION = '2.01';
-@ISA     = ();
+our $VERSION = '2.01';
+our $debug;
 
 =head2 Tree::MultiNode::new
 
@@ -147,7 +146,7 @@ $VERSION = '2.01';
 Creates a new Tree.  The tree will have a single top level node when created.
 The first node will have no value (undef) in either it's key or it's value.
 
-  my $tree = new Tree::MultiNode;
+  my $tree = Tree::MultiNode->new;
 
 =cut
 
@@ -177,6 +176,12 @@ use strict;
 use warnings;
 use Carp;
 
+sub _debug {
+    return unless $Tree::MultiNode::debug;
+    no warnings 'uninitialized';
+    print @_;
+}
+
 =head2 Tree::MultiNode::Node
 
 Please note that the Node object is used internally by the MultiNode object.  
@@ -202,14 +207,14 @@ will create a clone of the node object.  If two arguments are passed, the first
 is stored as the key, and the second is stored as the value.
 
   # clone an existing node
-  my $node = new Tree::MultiNode::Node($oldNode);
+  my $node = Tree::MultiNode::Node->new($oldNode);
   # or
   my $node = $oldNode->new();
 
   # create a new node
-  my $node = new Tree::MultiNode::Node;
-  my $node = new Tree::MultiNode::Node("fname");
-  my $node = new Tree::MultiNode::Node("fname","Larry");
+  my $node = Tree::MultiNode::Node->new;
+  my $node = Tree::MultiNode::Node->new("fname");
+  my $node = Tree::MultiNode::Node->new("fname","Larry");
 
 =cut
 
@@ -229,8 +234,7 @@ sub new {
         my ( $key, $value );
         $key   = $node;
         $value = shift;
-        print __PACKAGE__, "::new() key,val = $key,$value\n"
-          if $Tree::MultiNode::debug;
+        _debug(__PACKAGE__, "::new() key,val = ", $key, ",", $value, "\n");
         $self->{'children'} = [];
         $self->{'parent'}   = undef;
         $self->{'key'}      = defined $key ? $key : undef;
@@ -270,8 +274,7 @@ sub key {
     my ( $self, $key ) = @_;
 
     if ( @_ > 1 ) {
-        print __PACKAGE__, "::key() setting key: $key on $self\n"
-          if $Tree::MultiNode::debug;
+        _debug(__PACKAGE__, "::key() setting key: ", $key, " on ", $self, "\n");
         $self->{'key'} = $key;
     }
 
@@ -297,8 +300,7 @@ sub value {
     my ( $self, $value ) = @_;
 
     if ( @_ > 1 ) {
-        print __PACKAGE__, "::value() setting value: $value on $self\n"
-          if $Tree::MultiNode::debug;
+        _debug(__PACKAGE__, "::value() setting value: ", $value, " on ", $self, "\n");
         $self->{'value'} = $value;
     }
 
@@ -451,6 +453,7 @@ Used for diagnostics, it prints out the members of the node.
 sub dump {
     my $self = shift;
 
+    no warnings 'uninitialized';
     print "[dump] key:       ", $self->{'key'},      "\n";
     print "[dump] val:       ", $self->{'value'},    "\n";
     print "[dump] parent:    ", $self->{'parent'},   "\n";
@@ -472,6 +475,12 @@ package Tree::MultiNode::Handle;
 use strict;
 use warnings;
 use Carp;
+
+sub _debug {
+    return unless $Tree::MultiNode::debug;
+    no warnings 'uninitialized';
+    print @_;
+}
 
 =head2 Tree::MultiNode::Handle
 
@@ -499,12 +508,12 @@ has a depth of 0, each of its children has a depth of 1, etc.
 
 =cut
 
-=head2 Tree::MultiNode::Handle::New
+=head2 Tree::MultiNode::Handle::new
 
-Constructs a new handle.  You must pass a tree object to Handle::New.
+Constructs a new handle.  You must pass a tree object to Handle::new.
 
-  my $tree   = new Tree::MultiNode;
-  my $handle = new Tree::MultiNode::Handle($tree);
+  my $tree   = Tree::MultiNode->new;
+  my $handle = Tree::MultiNode::Handle->new($tree);
 
 =cut
 
@@ -515,8 +524,7 @@ sub new {
     my $self = {};
     bless $self, $class;
     my $data = shift;
-    print __PACKAGE__, "::new() ref($data) is: ", ref($data), "\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::new() ref($data) is: ", ref($data), "\n");
     if ( ref($data) eq "Tree::MultiNode::Handle" ) {
         $self->_clone($data);
     }
@@ -541,10 +549,8 @@ sub new {
 sub _clone {
     my $self = shift;
     my $them = shift;
-    print __PACKAGE__, "::_clone() cloning: $them\n"
-      if $Tree::MultiNode::debug;
-    print __PACKAGE__, "::_clone() depth: ", $them->{'curr_depth'}, "\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::_clone() cloning: ", $them, "\n");
+    _debug(__PACKAGE__, "::_clone() depth: ", $them->{'curr_depth'}, "\n");
     $self->{'tree'}       = $them->{'tree'};
     $self->{'curr_pos'}   = $them->{'curr_pos'};
     $self->{'curr_node'}  = $them->{'curr_node'};
@@ -558,7 +564,7 @@ sub _clone {
 Returns the tree that was used to construct the node.  Useful if you're
 trying to create another node into the tree.
 
-  my $handle2 = new Tree::MultiNode::Handle($handle->tree());
+  my $handle2 = Tree::MultiNode::Handle->new($handle->tree());
 
 =cut
 
@@ -596,8 +602,7 @@ sub get_key {
 
     my $key = $node->key();
 
-    print __PACKAGE__, "::get_key() getting from $node : $key\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::get_key() getting from ", $node, " : ", $key, "\n");
 
     return $key;
 }
@@ -615,8 +620,7 @@ sub set_key {
     my $key  = shift;
     my $node = $self->{'curr_node'};
 
-    print __PACKAGE__, "::set_key() setting key \"$key\" on: $node\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::set_key() setting key \"", $key, "\" on: ", $node, "\n");
 
     return $node->key($key);
 }
@@ -635,8 +639,7 @@ sub get_value {
 
     my $value = $node->value();
 
-    print __PACKAGE__, "::get_value() getting from $node : $value\n",
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::get_value() getting from ", $node, " : ", $value, "\n");
 
     return $value;
 }
@@ -654,8 +657,7 @@ sub set_value {
     my $value = shift;
     my $node  = $self->{'curr_node'};
 
-    print __PACKAGE__, "::set_value() setting value \"$value\" on: $node\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::set_value() setting value \"", $value, "\" on: ", $node, "\n");
 
     return $node->value($value);
 }
@@ -676,8 +678,7 @@ sub get_child {
     my $pos      = shift;
     $pos = defined $pos ? $pos : $self->{'curr_pos'};
 
-    print __PACKAGE__, "::get_child() children: $children   $pos\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::get_child() children: ", $children, "   ", $pos, "\n");
 
     unless ( defined $children ) {
         return undef;
@@ -688,8 +689,8 @@ sub get_child {
         confess "Error, $pos is an invalid position [$num] $children.\n";
     }
 
-    print __PACKAGE__, "::get_child() returning [$pos]: ",
-      ${$children}[$pos], "\n" if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::get_child() returning [$pos]: ",
+      ${$children}[$pos], "\n");
     return ( ${$children}[$pos] );
 }
 
@@ -716,20 +717,18 @@ sub add_child {
     my $self = shift;
     my ( $key, $value, $pos ) = @_;
     my $children = $self->{'curr_node'}->children;
-    print __PACKAGE__, "::add_child() children: $children\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::add_child() children: ", $children, "\n");
     my $curr_pos  = $self->{'curr_pos'};
     my $curr_node = $self->{'curr_node'};
 
     my $child = Tree::MultiNode::Node->new( $key, $value );
     $child->{'parent'} = $curr_node;
 
-    print __PACKAGE__, "::add_child() adding child $child ($key,$value) ",
-      "to: $children\n" if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::add_child() adding child ", $child, " (", $key, ",", $value, ") ",
+      "to: ", $children, "\n");
 
     if ( defined $pos ) {
-        print __PACKAGE__, "::add_child() adding at $pos $child\n"
-          if $Tree::MultiNode::debug;
+        _debug(__PACKAGE__, "::add_child() adding at ", $pos, " ", $child, "\n");
         unless ( $pos <= $#{$children} ) {
             my $num = $#{$children};
             confess "Position $pos is invalid for child position [$num] $children.\n";
@@ -737,14 +736,12 @@ sub add_child {
         splice( @{$children}, $pos, 1, $child, ${$children}[$pos] );
     }
     else {
-        print __PACKAGE__, "::add_child() adding at end $child\n"
-          if $Tree::MultiNode::debug;
+        _debug(__PACKAGE__, "::add_child() adding at end ", $child, "\n");
         push @{$children}, $child;
     }
 
-    print __PACKAGE__,                                  "::add_child() children:",
-      join( ',', @{ $self->{'curr_node'}->children } ), "\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::add_child() children:",
+      join( ',', @{ $self->{'curr_node'}->children } ), "\n");
 }
 
 =head2 Tree::MultiNode::Handle::add_child_node
@@ -763,8 +760,7 @@ sub add_child_node {
     my $self = shift;
     my ( $child, $pos ) = @_;
     my $children = $self->{'curr_node'}->children;
-    print __PACKAGE__, "::add_child_node() children: $children\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::add_child_node() children: ", $children, "\n");
     my $curr_pos  = $self->{'curr_pos'};
     my $curr_node = $self->{'curr_node'};
     if ( ref($child) eq 'Tree::MultiNode' ) {
@@ -777,12 +773,11 @@ sub add_child_node {
 
     $child->{'parent'} = $curr_node;
 
-    print __PACKAGE__, "::add_child_node() adding child $child ",
-      "to: $children\n" if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::add_child_node() adding child ", $child,
+      " to: ", $children, "\n");
 
     if ( defined $pos ) {
-        print __PACKAGE__, "::add_child_node() adding at $pos $child\n"
-          if $Tree::MultiNode::debug;
+        _debug(__PACKAGE__, "::add_child_node() adding at ", $pos, " ", $child, "\n");
         unless ( $pos <= $#{$children} ) {
             my $num = $#{$children};
             confess "Position $pos is invalid for child position [$num] $children.\n";
@@ -790,14 +785,12 @@ sub add_child_node {
         splice( @{$children}, $pos, 1, $child, ${$children}[$pos] );
     }
     else {
-        print __PACKAGE__, "::add_child_node() adding at end $child\n"
-          if $Tree::MultiNode::debug;
+        _debug(__PACKAGE__, "::add_child_node() adding at end ", $child, "\n");
         push @{$children}, $child;
     }
 
-    print __PACKAGE__,                                  "::add_child_node() children:",
-      join( ',', @{ $self->{'curr_node'}->children } ), "\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::add_child_node() children:",
+      join( ',', @{ $self->{'curr_node'}->children } ), "\n");
 }
 
 =head2 Tree::MultiNode::Handle::depth
@@ -812,8 +805,8 @@ sub depth {
     my $self = shift;
     my $node = $self->{'curr_node'};
 
-    print __PACKAGE__, "::depth() getting depth \"$self->{'curr_depth'}\" ",
-      "on: $node\n" if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::depth() getting depth \"", $self->{'curr_depth'}, "\" ",
+      "on: ", $node, "\n");
 
     return $self->{'curr_depth'};
 }
@@ -873,18 +866,16 @@ sub position {
     my $self = shift;
     my $pos  = shift;
 
-    print __PACKAGE__, "::position() $self  $pos\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::position() ", $self, "  ", $pos, "\n");
 
     unless ( defined $pos ) {
         return $self->{'curr_pos'};
     }
 
     my $children = $self->{'curr_node'}->children;
-    print __PACKAGE__, "::position() children: $children\n"
-      if $Tree::MultiNode::debug;
-    print __PACKAGE__, "::position() position is $pos  ",
-      $#{$children}, "\n" if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::position() children: ", $children, "\n");
+    _debug(__PACKAGE__, "::position() position is $pos  ",
+      $#{$children}, "\n");
     unless ( $pos <= $#{$children} ) {
         my $num = $#{$children};
         confess "Error, $pos is invalid [$num] $children.\n";
@@ -920,8 +911,8 @@ sub first {
 
     $self->{'curr_pos'}   = 0;
     $self->{'curr_child'} = $self->get_child(0);
-    print __PACKAGE__, "::first() set child[", $self->{'curr_pos'}, "]: ",
-      $self->{'curr_child'}, "\n" if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::first() set child[", $self->{'curr_pos'}, "]: ",
+      $self->{'curr_child'}, "\n");
     return $self->{'curr_pos'};
 }
 
@@ -929,8 +920,7 @@ sub next {
     my $self     = shift;
     my $pos      = $self->{'curr_pos'} + 1;
     my $children = $self->{'curr_node'}->children;
-    print __PACKAGE__, "::next() children: $children\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::next() children: ", $children, "\n");
 
     unless ( $pos >= 0 && $pos <= $#{$children} ) {
         return undef;
@@ -945,8 +935,7 @@ sub prev {
     my $self     = shift;
     my $pos      = $self->{'curr_pos'} - 1;
     my $children = $self->{'curr_node'}->children;
-    print __PACKAGE__, "::prev() children: $children\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::prev() children: ", $children, "\n");
 
     unless ( $pos >= 0 && $pos <= $#{$children} ) {
         return undef;
@@ -961,8 +950,7 @@ sub last {
     my $self     = shift;
     my $children = $self->{'curr_node'}->children;
     my $pos      = $#{$children};
-    print __PACKAGE__, "::last() children [$pos]: $children\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::last() children [", $pos, "]: ", $children, "\n");
 
     $self->{'curr_pos'}   = $pos;
     $self->{'curr_child'} = $self->get_child($pos);
@@ -985,8 +973,7 @@ sub down {
     my $node = $self->{'curr_node'};
     return undef unless defined $node;
     my $children = $node->children;
-    print __PACKAGE__, "::down() children: $children\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::down() children: ", $children, "\n");
 
     if ( defined $pos ) {
         unless ( defined $self->position($pos) ) {
@@ -998,8 +985,7 @@ sub down {
     $self->{'curr_node'}  = $self->{'curr_child'};
     $self->{'curr_child'} = undef;
     ++$self->{'curr_depth'};
-    print __PACKAGE__, "::down() set to: ", $self->{'curr_node'}, "\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::down() set to: ", $self->{'curr_node'}, "\n");
 
     return 1;
 }
@@ -1126,8 +1112,7 @@ sub get_child_value {
     my $pos  = shift;
     $pos = defined $pos ? $pos : $self->{'curr_pos'};
 
-    print __PACKAGE__, "::sub get_child_value() pos is: $pos\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::get_child_value() pos is: ", $pos, "\n");
     my $node = $self->get_child($pos);
     return defined $node ? $node->value() : undef;
 }
@@ -1163,8 +1148,7 @@ sub remove_child {
     my $pos  = shift;
     $pos = defined $pos ? $pos : $self->{'curr_pos'};
 
-    print __PACKAGE__, "::remove_child() pos is: $pos\n"
-      if $Tree::MultiNode::debug;
+    _debug(__PACKAGE__, "::remove_child() pos is: ", $pos, "\n");
 
     my $children = $self->{'curr_node'}->children;
 
