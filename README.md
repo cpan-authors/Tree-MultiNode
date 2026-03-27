@@ -542,3 +542,8 @@ Todd Rinaldo <toddr@cpan.org>
 
 Please report bugs via the issue tracker at
 [https://github.com/cpan-authors/Tree-MultiNode/issues](https://github.com/cpan-authors/Tree-MultiNode/issues).
+
+# LICENSE
+
+This module is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.  See [perlartistic](https://metacpan.org/pod/perlartistic) and [perlgpl](https://metacpan.org/pod/perlgpl).

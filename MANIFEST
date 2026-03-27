@@ -1,10 +1,11 @@
 Changes
 CONTRIBUTING.md
 INSTALL
-LICENSE
 lib/Tree/MultiNode.pm
+LICENSE
 Makefile.PL
 MANIFEST
+MANIFEST.SKIP
 README.md
 SECURITY.md
 t/00-load.t
