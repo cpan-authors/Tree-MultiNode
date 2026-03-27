@@ -8,6 +8,7 @@ WriteMakefile(
     VERSION_FROM        => 'lib/Tree/MultiNode.pm',
     ABSTRACT_FROM       => 'lib/Tree/MultiNode.pm',
     PL_FILES            => {},
+    ($ExtUtils::MakeMaker::VERSION >= 6.48 ? (MIN_PERL_VERSION => '5.006') : ()),
     ($ExtUtils::MakeMaker::VERSION >= 6.3002 ? ('LICENSE'        => 'perl', ) : ()),
     PREREQ_PM => {
         'Test::More'     => 0,  # For testing
@@ -22,6 +23,18 @@ WriteMakefile(
             license => 'http://dev.perl.org/licenses/',
             bugtracker => 'https://github.com/toddr/Tree-MultiNode/issues',
             repository => 'https://github.com/toddr/Tree-MultiNode',
+        },
+        provides => {
+            'Tree::MultiNode' => {
+                file    => 'lib/Tree/MultiNode.pm',
+                version => '2.01',
+            },
+            'Tree::MultiNode::Node' => {
+                file    => 'lib/Tree/MultiNode.pm',
+            },
+            'Tree::MultiNode::Handle' => {
+                file    => 'lib/Tree/MultiNode.pm',
+            },
         },
     },
 );
