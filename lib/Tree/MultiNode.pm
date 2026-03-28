@@ -463,8 +463,10 @@ sub dump {
 sub _clearrefs {
     my $self = shift;
     delete $self->{'parent'};
-    foreach my $child ( @{ $self->children() } ) {
-        $child->_clearrefs();
+    if ( my $children = $self->{'children'} ) {
+        foreach my $child ( @{ $children } ) {
+            $child->_clearrefs();
+        }
     }
     delete $self->{'children'};
 }

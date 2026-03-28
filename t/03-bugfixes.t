@@ -122,4 +122,26 @@ subtest 'Node::key() handles falsy values' => sub {
     is($node->key(), "", 'key can be set to empty string');
 };
 
+# ============================================================================
+# Bug fix: _clearrefs must not crash when children is undef (GH #16)
+# ============================================================================
+
+subtest 'double DESTROY does not crash on undef children' => sub {
+    my $tree   = Tree::MultiNode->new();
+    my $handle = Tree::MultiNode::Handle->new($tree);
+    $handle->set_key("root");
+    $handle->add_child("a", 1);
+    $handle->add_child("b", 2);
+    $handle->down(0);
+    $handle->add_child("deep", "val");
+
+    # First DESTROY clears children via _clearrefs
+    $tree->DESTROY();
+
+    # Second DESTROY (simulates Perl GC calling DESTROY again)
+    # This used to die: "Can't use an undefined value as an ARRAY reference"
+    eval { $tree->DESTROY() };
+    is($@, '', 'second DESTROY does not crash');
+};
+
 done_testing;
