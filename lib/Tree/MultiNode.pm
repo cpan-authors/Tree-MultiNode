@@ -1168,7 +1168,15 @@ sub remove_child {
     $self->{'curr_pos'}   = undef;
     $self->{'curr_child'} = undef;
 
-    return ( $node->key, $node->value );
+    my @kv = ( $node->key, $node->value );
+
+    # Break circular references in the removed subtree to prevent
+    # memory leaks -- the tree's DESTROY only clears nodes still
+    # reachable from the top, so spliced-out subtrees must be
+    # cleaned up explicitly.
+    $node->_clearrefs();
+
+    return @kv;
 }
 
 =head2 Tree::MultiNode::Handle::child_keys

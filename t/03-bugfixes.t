@@ -122,4 +122,37 @@ subtest 'Node::key() handles falsy values' => sub {
     is($node->key(), "", 'key can be set to empty string');
 };
 
+# ============================================================================
+# Bug fix: remove_child must break circular refs in removed subtree
+# ============================================================================
+
+subtest 'remove_child breaks circular refs in removed subtree' => sub {
+    eval { require Scalar::Util; Scalar::Util->import('weaken'); 1 }
+      or do { plan skip_all => 'Scalar::Util not available'; return };
+
+    my $tree   = Tree::MultiNode->new();
+    my $handle = Tree::MultiNode::Handle->new($tree);
+
+    # Build: root -> "a" -> "b"
+    $handle->add_child("a", 1);
+    $handle->first();
+    $handle->down();          # now at node "a"
+    $handle->add_child("b", 2);
+
+    # Grab a weak ref to the grandchild "b"
+    $handle->first();
+    my $b_node = $handle->get_child(0);
+    weaken(my $weak_b = $b_node);
+    undef $b_node;
+
+    # Navigate back to root and remove "a" (which contains "b")
+    $handle->up();
+    my ($key, $val) = $handle->remove_child(0);
+    is($key, "a", 'removed correct node');
+    is($val, 1,   'removed correct value');
+
+    # The subtree "a"->"b" should be freed -- no circular ref leak
+    is($weak_b, undef, 'grandchild freed after subtree removal (no leak)');
+};
+
 done_testing;
