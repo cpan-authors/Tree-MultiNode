@@ -8,8 +8,8 @@ modeling hierarchical data structures.
     use Tree::MultiNode;
     use strict; 
     use warnings;
-    my $tree   = new Tree::MultiNode;
-    my $handle = new Tree::MultiNode::Handle($tree);
+    my $tree   = Tree::MultiNode->new;
+    my $handle = Tree::MultiNode::Handle->new($tree);
 
     $handle->set_key("top");
     $handle->set_value("level");
@@ -75,8 +75,8 @@ When you first construct a tree, it will have a single empty node.  When you
 construct a handle into that tree, it will set the top node in the tree as 
 it's current node.  
 
-    my $tree   = new Tree::MultiNode;
-    my $handle = new Tree::MultiNode::Handle($tree);
+    my $tree   = Tree::MultiNode->new;
+    my $handle = Tree::MultiNode::Handle->new($tree);
 
 ## Using a Handle to Manipulate the Tree
 
@@ -131,7 +131,7 @@ The tree object.
 Creates a new Tree.  The tree will have a single top level node when created.
 The first node will have no value (undef) in either it's key or it's value.
 
-    my $tree = new Tree::MultiNode;
+    my $tree = Tree::MultiNode->new;
 
 ## Tree::MultiNode::Node
 
@@ -156,14 +156,14 @@ will create a clone of the node object.  If two arguments are passed, the first
 is stored as the key, and the second is stored as the value.
 
     # clone an existing node
-    my $node = new Tree::MultiNode::Node($oldNode);
+    my $node = Tree::MultiNode::Node->new($oldNode);
     # or
     my $node = $oldNode->new();
 
     # create a new node
-    my $node = new Tree::MultiNode::Node;
-    my $node = new Tree::MultiNode::Node("fname");
-    my $node = new Tree::MultiNode::Node("fname","Larry");
+    my $node = Tree::MultiNode::Node->new;
+    my $node = Tree::MultiNode::Node->new("fname");
+    my $node = Tree::MultiNode::Node->new("fname","Larry");
 
 ## Tree::MultiNode::Node::key
 
@@ -270,19 +270,19 @@ The depth of the current node is a measure of the length of the path
 from the top of the tree to the current node, i.e., the top of the node
 has a depth of 0, each of its children has a depth of 1, etc.
 
-## Tree::MultiNode::Handle::New
+## Tree::MultiNode::Handle::new
 
-Constructs a new handle.  You must pass a tree object to Handle::New.
+Constructs a new handle.  You must pass a tree object to Handle::new.
 
-    my $tree   = new Tree::MultiNode;
-    my $handle = new Tree::MultiNode::Handle($tree);
+    my $tree   = Tree::MultiNode->new;
+    my $handle = Tree::MultiNode::Handle->new($tree);
 
 ## Tree::MultiNode::Handle::tree
 
 Returns the tree that was used to construct the node.  Useful if you're
 trying to create another node into the tree.
 
-    my $handle2 = new Tree::MultiNode::Handle($handle->tree());
+    my $handle2 = Tree::MultiNode::Handle->new($handle->tree());
 
 ## Tree::MultiNode::Handle::get\_data
 
@@ -410,8 +410,8 @@ child becomes invalid (undef).
 
 ## Tree::MultiNode::Handle::up
 
-down() moves the handle to point at the parent of the current node.  It fails
-if there is no parent node.  When up() is called, the current child becomes 
+up() moves the handle to point at the parent of the current node.  It fails
+if there is no parent node.  When up() is called, the current child becomes
 invalid (undef).
 
     $handle->up();

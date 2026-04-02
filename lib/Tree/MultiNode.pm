@@ -1002,8 +1002,8 @@ sub down {
 
 =head2 Tree::MultiNode::Handle::up
 
-down() moves the handle to point at the parent of the current node.  It fails
-if there is no parent node.  When up() is called, the current child becomes 
+up() moves the handle to point at the parent of the current node.  It fails
+if there is no parent node.  When up() is called, the current child becomes
 invalid (undef).
 
   $handle->up();
