@@ -161,12 +161,12 @@ sub new {
 }
 
 #
-# this destructor is for clearing the circular references between
-# the tree, the nodes, and their children.
+# With weak parent references, there are no circular references to break.
+# Perl's reference counting handles cleanup naturally.
 #
 sub DESTROY {
     my $self = shift;
-    $self->{'top'}->_clearrefs() if $self->{'top'};
+    delete $self->{'top'};
 }
 
 1;
@@ -175,6 +175,7 @@ package Tree::MultiNode::Node;
 use strict;
 use warnings;
 use Carp;
+use Scalar::Util qw(weaken);
 
 sub _debug {
     return unless $Tree::MultiNode::debug;
@@ -252,6 +253,7 @@ sub _clone {
     my $self = shift;
     my $them = shift;
     $self->{'parent'}   = $them->parent;
+    weaken($self->{'parent'}) if defined $self->{'parent'};
     $self->{'children'} = [ $them->children ];
     $self->{'key'}      = $them->key;
     $self->{'value'}    = $them->value;
@@ -463,8 +465,11 @@ sub dump {
 sub _clearrefs {
     my $self = shift;
     delete $self->{'parent'};
-    foreach my $child ( @{ $self->children() } ) {
-        $child->_clearrefs();
+    my $children = $self->{'children'};
+    if ( defined $children ) {
+        foreach my $child ( @{$children} ) {
+            $child->_clearrefs() if defined $child;
+        }
     }
     delete $self->{'children'};
 }
@@ -475,6 +480,7 @@ package Tree::MultiNode::Handle;
 use strict;
 use warnings;
 use Carp;
+use Scalar::Util qw(weaken);
 
 sub _debug {
     return unless $Tree::MultiNode::debug;
@@ -723,6 +729,7 @@ sub add_child {
 
     my $child = Tree::MultiNode::Node->new( $key, $value );
     $child->{'parent'} = $curr_node;
+    weaken($child->{'parent'});
 
     _debug(__PACKAGE__, "::add_child() adding child ", $child, " (", $key, ",", $value, ") ",
       "to: ", $children, "\n");
@@ -772,6 +779,7 @@ sub add_child_node {
       if ( ref($child) ne 'Tree::MultiNode::Node' );
 
     $child->{'parent'} = $curr_node;
+    weaken($child->{'parent'});
 
     _debug(__PACKAGE__, "::add_child_node() adding child ", $child,
       " to: ", $children, "\n");
