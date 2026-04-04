@@ -1205,6 +1205,20 @@ sub child_keys {
     return $node->child_keys();
 }
 
+=head2 Tree::MultiNode::Handle::child_values
+
+Returns the values from the current node's children.
+Returns undef if there is no current node.
+
+=cut
+
+sub child_values {
+    my $self = shift;
+    my $node = $self->{'curr_node'};
+    return undef unless $node;
+    return $node->child_values();
+}
+
 =head2 Tree::MultiNode::Handle::traverse
 
   $handle->traverse(sub {
