@@ -177,6 +177,8 @@ use warnings;
 use Carp;
 use Scalar::Util qw(weaken);
 
+our $VERSION = '2.01';
+
 sub _debug {
     return unless $Tree::MultiNode::debug;
     no warnings 'uninitialized';
@@ -481,6 +483,8 @@ use strict;
 use warnings;
 use Carp;
 use Scalar::Util qw(weaken);
+
+our $VERSION = '2.01';
 
 sub _debug {
     return unless $Tree::MultiNode::debug;

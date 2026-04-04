@@ -12,5 +12,6 @@ t/00-load.t
 t/01-multinode.t
 t/02-comprehensive.t
 t/03-bugfixes.t
+t/04-edge-cases.t
 xt/98-pod-coverage.t
 xt/99-pod.t

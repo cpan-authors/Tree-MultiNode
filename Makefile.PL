@@ -40,12 +40,15 @@ WriteMakefile(
         provides => {
             'Tree::MultiNode' => {
                 file    => 'lib/Tree/MultiNode.pm',
+                version => '2.01',
             },
             'Tree::MultiNode::Node' => {
                 file    => 'lib/Tree/MultiNode.pm',
+                version => '2.01',
             },
             'Tree::MultiNode::Handle' => {
                 file    => 'lib/Tree/MultiNode.pm',
+                version => '2.01',
             },
         },
     },
