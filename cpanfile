@@ -6,4 +6,5 @@ on 'test' => sub {
     requires 'Test::Pod::Coverage' => 0;
     requires 'Test::Pod'           => 0;
     requires 'Pod::Coverage'       => 0;
+    requires 'Scalar::Util'        => 0;
 };
