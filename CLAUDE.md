@@ -21,13 +21,13 @@ prove -bv t/01-multinode.t      # Run a single test file verbosely
 ## Architecture
 
 - Module files: `lib/Tree/MultiNode.pm` (container + top-level POD), `lib/Tree/MultiNode/Node.pm`, `lib/Tree/MultiNode/Handle.pm`
-- Tests: `t/00-load.t` (smoke), `t/01-multinode.t` (functional), `t/02-comprehensive.t` (full coverage), `t/03-bugfixes.t` (regression tests)
+- Tests: `t/00-load.t` (smoke), `t/01-multinode.t` (functional), `t/node.t` (Node class), `t/tree.t` (Tree container), `t/handle.t` (Handle cursor), `t/03-bugfixes.t` (regression tests), `t/04-edge-cases.t` (edge cases)
 - Extended tests: `xt/` (pod, pod-coverage)
 - CI: GitHub Actions across Linux (Perl 5.8–latest), macOS, Windows
 
 ## Conventions
 
-- Tests use `Test::More` with a declared plan (`tests => N`)
+- Tests use `Test::More` — newer files use `done_testing()`, legacy files use a declared plan (`tests => N`)
 - Tests run under taint mode (`#!perl -T`)
 - No external dependencies beyond core Perl and Test::More
 - `$Tree::MultiNode::debug` enables verbose debug prints throughout
