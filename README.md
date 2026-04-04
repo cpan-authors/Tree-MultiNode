@@ -1,5 +1,7 @@
 # NAME
 
+[![testsuite](https://github.com/cpan-authors/Tree-MultiNode/actions/workflows/testsuite.yml/badge.svg)](https://github.com/cpan-authors/Tree-MultiNode/actions/workflows/testsuite.yml)
+
 Tree::MultiNode -- a multi-node tree object.  Most useful for 
 modeling hierarchical data structures.
 
@@ -506,7 +508,7 @@ The handle is passed as the last argument to the method.
 This allows you to have the subref be a method on an object (and still
 pass the object's 'self' to the method).
 
-    $handle->traverse( \&Some::Object::method, $obj, $const1, \%const2 );
+    $handle->otraverse( $obj, \&Some::Object::method, $const1, \%const2 );
 
     ...
     sub method

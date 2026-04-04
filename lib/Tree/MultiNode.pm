@@ -1,6 +1,8 @@
 
 =head1 NAME
 
+=for markdown [![testsuite](https://github.com/cpan-authors/Tree-MultiNode/actions/workflows/testsuite.yml/badge.svg)](https://github.com/cpan-authors/Tree-MultiNode/actions/workflows/testsuite.yml)
+
 Tree::MultiNode -- a multi-node tree object.  Most useful for 
 modeling hierarchical data structures.
 
