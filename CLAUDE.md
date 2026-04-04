@@ -4,10 +4,10 @@
 
 A Perl module for modeling hierarchical data as multi-node trees. Each node has a key, a value, and an ordered list of children. Operations use a Handle (cursor) that points into the tree.
 
-Three packages in one file (`lib/Tree/MultiNode.pm`):
-- `Tree::MultiNode` — tree container (holds the top node)
-- `Tree::MultiNode::Node` — individual node (key, value, children, parent)
-- `Tree::MultiNode::Handle` — cursor for navigating and manipulating the tree
+Three packages, each in its own file:
+- `lib/Tree/MultiNode.pm` — tree container (holds the top node), top-level POD
+- `lib/Tree/MultiNode/Node.pm` — individual node (key, value, children, parent)
+- `lib/Tree/MultiNode/Handle.pm` — cursor for navigating and manipulating the tree
 
 ## Commands
 
@@ -20,7 +20,7 @@ prove -bv t/01-multinode.t      # Run a single test file verbosely
 
 ## Architecture
 
-- Single-file module: `lib/Tree/MultiNode.pm`
+- Module files: `lib/Tree/MultiNode.pm` (container + top-level POD), `lib/Tree/MultiNode/Node.pm`, `lib/Tree/MultiNode/Handle.pm`
 - Tests: `t/00-load.t` (smoke), `t/01-multinode.t` (functional), `t/02-comprehensive.t` (full coverage), `t/03-bugfixes.t` (regression tests)
 - Extended tests: `xt/` (pod, pod-coverage)
 - CI: GitHub Actions across Linux (Perl 5.8–latest), macOS, Windows
