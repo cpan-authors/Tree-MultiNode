@@ -261,7 +261,7 @@ sub add_child {
 
     if ( defined $pos ) {
         _debug(__PACKAGE__, "::add_child() adding at ", $pos, " ", $child, "\n");
-        unless ( $pos <= $#{$children} ) {
+        unless ( $pos >= 0 && $pos <= $#{$children} ) {
             my $num = $#{$children};
             confess "Position $pos is invalid for child position [$num] $children.\n";
         }
@@ -283,6 +283,15 @@ current node.  Works like C<add_child()> but accepts a pre-built
 L<Tree::MultiNode::Node> or L<Tree::MultiNode> object instead of a key/value
 pair.
 
+When a Tree::MultiNode (tree) object is passed, its top node is extracted
+and added as a child.  The original tree remains valid but now shares
+structure with this tree -- the caller should not modify the original tree
+after this call.
+
+When a position is given, the new child is inserted before the existing
+child at that position.  Without a position, the child is appended to the
+end.
+
   # append an existing node as the last child
   my $node = Tree::MultiNode::Node->new("color", "red");
   $handle->add_child_node($node);
@@ -302,9 +311,7 @@ sub add_child_node {
     my $children = $self->{'curr_node'}->children;
     _debug(__PACKAGE__, "::add_child_node() children: ", $children, "\n");
     if ( ref($child) eq 'Tree::MultiNode' ) {
-        my $top = $child->{'top'};
-        $child->{'top'} = undef;
-        $child = $top;
+        $child = $child->{'top'};
     }
     confess "Invalid child argument.\n"
       if ( ref($child) ne 'Tree::MultiNode::Node' );
@@ -317,7 +324,7 @@ sub add_child_node {
 
     if ( defined $pos ) {
         _debug(__PACKAGE__, "::add_child_node() adding at ", $pos, " ", $child, "\n");
-        unless ( $pos <= $#{$children} ) {
+        unless ( $pos >= 0 && $pos <= $#{$children} ) {
             my $num = $#{$children};
             confess "Position $pos is invalid for child position [$num] $children.\n";
         }
@@ -415,7 +422,7 @@ sub position {
     _debug(__PACKAGE__, "::position() children: ", $children, "\n");
     _debug(__PACKAGE__, "::position() position is $pos  ",
       $#{$children}, "\n");
-    unless ( $pos <= $#{$children} ) {
+    unless ( $pos >= 0 && $pos <= $#{$children} ) {
         my $num = $#{$children};
         confess "Error, $pos is invalid [$num] $children.\n";
     }
