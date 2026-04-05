@@ -193,9 +193,9 @@ Tree::MultiNode::Node::child_kv_pairs
 These functions return arrays consisting of the appropriate data
 from the child nodes.
 
-  my @keys     = $handle->child_keys();
-  my @vals     = $handle->child_values();
-  my %kv_pairs = $handle->child_kv_pairs();
+  my @keys     = $node->child_keys();
+  my @vals     = $node->child_values();
+  my %kv_pairs = $node->child_kv_pairs();
 
 =cut
 
