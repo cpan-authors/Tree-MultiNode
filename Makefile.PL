@@ -12,16 +12,13 @@ WriteMakefile(
     ($ExtUtils::MakeMaker::VERSION >= 6.3002 ? ('LICENSE'        => 'perl', ) : ()),
     PREREQ_PM => {
         'Scalar::Util' => 0,
+        ($ExtUtils::MakeMaker::VERSION < 6.64 ? ('Test::More' => 0) : ()),
     },
     ($ExtUtils::MakeMaker::VERSION >= 6.64 ? (
         TEST_REQUIRES => {
             'Test::More' => 0,
         },
-    ) : (
-        PREREQ_PM => {
-            'Test::More' => 0,
-        },
-    )),
+    ) : ()),
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Tree-MultiNode-*' },
     META_MERGE  => {
