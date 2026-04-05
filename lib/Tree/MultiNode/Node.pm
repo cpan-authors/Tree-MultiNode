@@ -85,9 +85,16 @@ sub _clone {
     my $them = shift;
     $self->{'parent'}   = $them->parent;
     weaken($self->{'parent'}) if defined $self->{'parent'};
-    $self->{'children'} = [ $them->children ];
     $self->{'key'}      = $them->key;
     $self->{'value'}    = $them->value;
+    # Deep clone children so the copy is fully independent
+    $self->{'children'} = [];
+    foreach my $child ( @{$them->children} ) {
+        my $copy = Tree::MultiNode::Node->new($child);
+        $copy->{'parent'} = $self;
+        weaken($copy->{'parent'});
+        push @{$self->{'children'}}, $copy;
+    }
 }
 
 =head2 Tree::MultiNode::Node::key
