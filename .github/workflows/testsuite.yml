@@ -103,7 +103,7 @@ jobs:
         run: prove -b xt/*.t
 
   macOS:
-    needs: [ubuntu, linux, windows]
+    needs: [ubuntu, linux]
     runs-on: macos-latest
 
     env:
