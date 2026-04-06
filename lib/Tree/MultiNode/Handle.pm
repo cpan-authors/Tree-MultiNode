@@ -252,11 +252,8 @@ sub add_child {
     my ( $key, $value, $pos ) = @_;
     my $children = $self->{'curr_node'}->children;
     _debug(__PACKAGE__, "::add_child() children: ", $children, "\n");
-    my $curr_pos  = $self->{'curr_pos'};
-    my $curr_node = $self->{'curr_node'};
-
     my $child = Tree::MultiNode::Node->new( $key, $value );
-    $child->{'parent'} = $curr_node;
+    $child->{'parent'} = $self->{'curr_node'};
     weaken($child->{'parent'});
 
     _debug(__PACKAGE__, "::add_child() adding child ", $child, " (", $key, ",", $value, ") ",
@@ -281,13 +278,21 @@ sub add_child {
 
 =head2 Tree::MultiNode::Handle::add_child_node
 
-Recently added via RT # 5435 -- Currently in need of proper documentation and test patches
+Adds an existing node (or the top node of another tree) as a child of the
+current node.  Works like C<add_child()> but accepts a pre-built
+L<Tree::MultiNode::Node> or L<Tree::MultiNode> object instead of a key/value
+pair.
 
-  I've patched Tree::MultiNode 1.0.10 to add a method I'm currently calling add_child_node().
-  It works just like add_child() except it takes either a Tree::MultiNode::Node or a
-  Tree::MultiNode object instead. I found this extremely useful when using recursion to populate
-  a tree. It could also be used to subsume any tree into another tree, so this touches on the
-  topic of the other bug item here asking for methods to copy/move trees/nodes.
+  # append an existing node as the last child
+  my $node = Tree::MultiNode::Node->new("color", "red");
+  $handle->add_child_node($node);
+
+  # insert at a specific position
+  $handle->add_child_node($node, 0);   # insert as first child
+
+  # graft another tree's root node
+  my $other = Tree::MultiNode->new();
+  $handle->add_child_node($other);
 
 =cut
 
@@ -296,8 +301,6 @@ sub add_child_node {
     my ( $child, $pos ) = @_;
     my $children = $self->{'curr_node'}->children;
     _debug(__PACKAGE__, "::add_child_node() children: ", $children, "\n");
-    my $curr_pos  = $self->{'curr_pos'};
-    my $curr_node = $self->{'curr_node'};
     if ( ref($child) eq 'Tree::MultiNode' ) {
         my $top = $child->{'top'};
         $child->{'top'} = undef;
@@ -306,7 +309,7 @@ sub add_child_node {
     confess "Invalid child argument.\n"
       if ( ref($child) ne 'Tree::MultiNode::Node' );
 
-    $child->{'parent'} = $curr_node;
+    $child->{'parent'} = $self->{'curr_node'};
     weaken($child->{'parent'});
 
     _debug(__PACKAGE__, "::add_child_node() adding child ", $child,
