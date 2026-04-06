@@ -447,6 +447,11 @@ These functions will fail if there are no children for the current node.
 
 sub first {
     my $self = shift;
+    my $children = $self->{'curr_node'}->children;
+
+    unless ( defined $children && @{$children} ) {
+        return undef;
+    }
 
     $self->{'curr_pos'}   = 0;
     $self->{'curr_child'} = $self->get_child(0);
@@ -498,6 +503,11 @@ sub prev {
 sub last {
     my $self     = shift;
     my $children = $self->{'curr_node'}->children;
+
+    unless ( defined $children && @{$children} ) {
+        return undef;
+    }
+
     my $pos      = $#{$children};
     _debug(__PACKAGE__, "::last() children [", $pos, "]: ", $children, "\n");
 
@@ -528,6 +538,11 @@ sub down {
         unless ( defined $self->position($pos) ) {
             confess "Error, $pos was an invalid position.\n";
         }
+    }
+
+    # Prevent corrupting the handle when no child is selected
+    unless ( defined $self->{'curr_child'} ) {
+        return undef;
     }
 
     $self->{'curr_pos'}   = undef;
