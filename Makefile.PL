@@ -9,16 +9,16 @@ WriteMakefile(
     ABSTRACT_FROM       => 'lib/Tree/MultiNode.pm',
     PL_FILES            => {},
     MIN_PERL_VERSION    => '5.008',
-    ($ExtUtils::MakeMaker::VERSION >= 6.3002 ? ('LICENSE'        => 'perl', ) : ()),
+    LICENSE             => 'perl',
+    CONFIGURE_REQUIRES  => {
+        'ExtUtils::MakeMaker' => '6.64',
+    },
     PREREQ_PM => {
         'Scalar::Util' => 0,
-        ($ExtUtils::MakeMaker::VERSION < 6.64 ? ('Test::More' => 0) : ()),
     },
-    ($ExtUtils::MakeMaker::VERSION >= 6.64 ? (
-        TEST_REQUIRES => {
-            'Test::More' => 0,
-        },
-    ) : ()),
+    TEST_REQUIRES => {
+        'Test::More' => 0,
+    },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Tree-MultiNode-*' },
     META_MERGE  => {
