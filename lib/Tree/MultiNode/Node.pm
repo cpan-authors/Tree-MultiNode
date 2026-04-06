@@ -262,6 +262,19 @@ sub child_key_positions {
     return %h;
 }
 
+=head2 Tree::MultiNode::Node::num_children
+
+Returns the number of children for this node.
+
+  my $count = $node->num_children();
+
+=cut
+
+sub num_children {
+    my $self = shift;
+    return scalar @{$self->{'children'}};
+}
+
 =head2 Tree::MultiNode::Node::parent
 
 Returns a reference to the parent node of the current node.

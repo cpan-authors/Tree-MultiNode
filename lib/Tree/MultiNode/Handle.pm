@@ -608,6 +608,21 @@ sub children {
     return @{$children};
 }
 
+=head2 Tree::MultiNode::Handle::num_children
+
+Returns the number of children for the current node.  This is more
+efficient than C<scalar($handle-E<gt>children())> because it does not
+copy the children array.
+
+  my $count = $handle->num_children();
+
+=cut
+
+sub num_children {
+    my $self = shift;
+    return $self->{'curr_node'}->num_children();
+}
+
 =head2 Tree::MultiNode::Handle::child_key_positions
 
 This function returns a hash table that consists of the
@@ -776,7 +791,8 @@ sub traverse {
 sub _traverseImpl {
     my ( $self, $subref, @args ) = @_;
     $subref->( @args, $self );
-    for ( my $i = 0; $i < scalar( $self->children ); ++$i ) {
+    my $num_children = $self->num_children();
+    for ( my $i = 0; $i < $num_children; ++$i ) {
         $self->down($i);
         $self->_traverseImpl( $subref, @args );
         $self->up();
@@ -818,7 +834,8 @@ sub otraverse {
 sub _otraverseImpl {
     my ( $self, $obj, $method, @args ) = @_;
     $obj->$method( @args, $self );
-    for ( my $i = 0; $i < scalar( $self->children ); ++$i ) {
+    my $num_children = $self->num_children();
+    for ( my $i = 0; $i < $num_children; ++$i ) {
         $self->down($i);
         $self->_otraverseImpl( $obj, $method, @args );
         $self->up();

@@ -389,4 +389,63 @@ subtest 'top resets depth to 0' => sub {
     is($handle->get_key(), "root", 'top resets to root node');
 };
 
+# ============================================================================
+# num_children
+# ============================================================================
+
+subtest 'Node::num_children' => sub {
+    my $node = Tree::MultiNode::Node->new("root", "val");
+    is($node->num_children(), 0, 'new node has 0 children');
+
+    my $child1 = Tree::MultiNode::Node->new("a", 1);
+    push @{$node->children}, $child1;
+    is($node->num_children(), 1, 'after adding one child');
+
+    my $child2 = Tree::MultiNode::Node->new("b", 2);
+    push @{$node->children}, $child2;
+    is($node->num_children(), 2, 'after adding two children');
+};
+
+subtest 'Handle::num_children' => sub {
+    my $tree   = Tree::MultiNode->new;
+    my $handle = Tree::MultiNode::Handle->new($tree);
+    $handle->set_key("root");
+
+    is($handle->num_children(), 0, 'root starts with 0 children');
+
+    $handle->add_child("a", 1);
+    is($handle->num_children(), 1, 'after add_child: 1 child');
+
+    $handle->add_child("b", 2);
+    $handle->add_child("c", 3);
+    is($handle->num_children(), 3, 'after 3 add_child calls');
+
+    # navigate down and check leaf
+    $handle->first();
+    $handle->down();
+    is($handle->num_children(), 0, 'leaf node has 0 children');
+
+    # add grandchildren and verify
+    $handle->add_child("x", 10);
+    $handle->add_child("y", 20);
+    is($handle->num_children(), 2, 'after adding grandchildren');
+
+    # go back up
+    $handle->up();
+    is($handle->num_children(), 3, 'parent still has 3 children');
+};
+
+subtest 'num_children consistent with scalar children' => sub {
+    my $tree   = Tree::MultiNode->new;
+    my $handle = Tree::MultiNode::Handle->new($tree);
+    $handle->set_key("root");
+
+    for my $i (0..4) {
+        $handle->add_child("child$i", $i);
+    }
+
+    is($handle->num_children(), scalar($handle->children()),
+       'num_children agrees with scalar children');
+};
+
 done_testing;
