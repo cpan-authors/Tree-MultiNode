@@ -137,7 +137,7 @@ use strict;
 use warnings;
 use 5.008;
 
-our $VERSION = '2.01';
+our $VERSION = '2.02';
 our $debug;
 
 use Tree::MultiNode::Node;

@@ -1,5 +1,45 @@
 Revision history for Perl extension Tree::MultiNode.
 
+2.02 2026-04-05
+
+  Bug Fixes:
+  - Fix next()/prev() crashing when curr_pos is undef, and fix otraverse
+    parameter handling. PR #7
+  - Fix first()/last() crashing on leaf nodes, and fix down() corrupting
+    handle state. GH #8, PR #8
+  - Fix Node::_clone deep cloning children instead of wrapping the arrayref,
+    which caused cloned trees to share child mutations. GH #9, PR #9
+  - Fix add_child_node destroying the caller's tree when merging, and add
+    validation for negative position arguments. GH #10, PR #10
+  - Fix circular reference memory leaks by using weak parent refs
+    (Scalar::Util::weaken). GH #21, PR #21
+  - Fix PREREQ_PM being silently overwritten on older ExtUtils::MakeMaker.
+    PR #31
+
+  Improvements:
+  - Add missing Handle::child_values() method. GH #23, PR #23
+  - Add num_children() method to Node and optimize traverse. PR #33
+  - Add use warnings to all packages. PR #15
+  - Modernize Perl pragmas and debug output style. PR #11
+  - Add edge case test coverage for Handle API behavioral contracts. PR #20
+  - Correct POD typo in up() method. PR #7
+  - Update INSTALL to match actual build system (Makefile.PL). PR #18
+
+  Maintenance:
+  - Split Node and Handle into separate module files. PR #28
+  - Split test suite into per-class test files (t/node.t, t/tree.t,
+    t/handle.t). PR #29
+  - Split bugfix tests into individual t/bugfix-*.t files. PR #34
+  - Remove unused variables and fix POD documentation. PR #30
+  - Correct CPAN metadata: Test::More as test dep, add MIN_PERL_VERSION
+    and provides. PR #13
+  - Update stale GitHub URLs in META_MERGE and skip CLAUDE.md from dist.
+    PR #12
+  - Add LICENSE, SECURITY, CONTRIBUTING files and update Makefile.PL
+    metadata. GH #14, PR #15
+  - Add CLAUDE.md with project conventions and generated file docs. PR #26
+  - Add Markdown README.md generated from POD.
+
 2.01 2026-03-22
 
   Bug Fixes:

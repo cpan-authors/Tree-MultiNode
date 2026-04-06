@@ -4,7 +4,7 @@ use warnings;
 use Carp;
 use Scalar::Util qw(weaken);
 
-our $VERSION = '2.01';
+our $VERSION = '2.02';
 
 sub _debug {
     return unless $Tree::MultiNode::debug;
